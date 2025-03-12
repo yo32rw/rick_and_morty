@@ -1,17 +1,16 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'character_summary.freezed.dart';
 part 'character_summary.g.dart';
 
-@JsonSerializable()
-class CharacterSummary {
-  final int id;
-  final String name;
-  final String image;
-
-  CharacterSummary({required this.id, required this.name, required this.image});
+@freezed
+abstract class CharacterSummary with _$CharacterSummary {
+  const factory CharacterSummary({
+    required int id,
+    required String name,
+    required String image,
+  }) = _CharacterSummary;
 
   factory CharacterSummary.fromJson(Map<String, dynamic> json) =>
       _$CharacterSummaryFromJson(json);
-
-  Map<String, dynamic> toJson() => _$CharacterSummaryToJson(this);
 }
