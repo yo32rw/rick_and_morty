@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rick_and_morty/data/service/api_service.dart';
 import 'package:rick_and_morty/ui/core/colors.dart';
 import 'package:rick_and_morty/ui/core/text_theme.dart';
 
 import '../../data/character_summary.dart';
+import '../../routing/routes.dart';
 import 'bloc/home_screen_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -63,31 +65,39 @@ class CharacterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 5,
-          children: [
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                  child: Image.network(characterSummary.image),
+    return GestureDetector(
+      onTap: () => context.go(Routes.details),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 5,
+            children: [
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                    child: Image.network(characterSummary.image),
+                  ),
+                  Positioned(right: 10, top: 10, child: LikeButton()),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: Text(
+                  characterSummary.name,
+                  style: AppTextTheme.bodyBold,
                 ),
-                Positioned(right: 10, top: 10, child: LikeButton()),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: Text(characterSummary.name, style: AppTextTheme.bodyBold),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

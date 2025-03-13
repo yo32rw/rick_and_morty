@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../data/character.dart';
+import '../../routing/routes.dart';
 import '../core/colors.dart';
+import '../core/text_theme.dart';
 
 class DetailsScreen extends StatelessWidget {
   const DetailsScreen({super.key});
@@ -15,6 +18,17 @@ class DetailsScreen extends StatelessWidget {
     gender: 'Female',
     image: 'https://rickandmortyapi.com/api/character/avatar/4.jpeg',
   );
+
+  final Map map = const <String, String>{
+    'Alien': 'assets/icons/alien.svg',
+    'Alive': 'assets/icons/alive.svg',
+    'Dead': 'assets/icons/dead.svg',
+    'Female_gender': 'assets/icons/female.svg',
+    'Human': 'assets/icons/human.svg',
+    'Male_gender': 'assets/icons/male.svg',
+    'unknown': 'assets/icons/unknown_alive.svg',
+    'unknown_gender': 'assets/icons/unknown_gender.svg',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +48,67 @@ class DetailsScreen extends StatelessWidget {
               ],
             ),
           ),
-          ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text('Name'),
-            subtitle: Text(character.name),
+          DetailsCard(
+            svgAssetName: 'assets/icons/information.svg',
+            title: 'Name',
+            subtitle: character.name,
+          ),
+          DetailsCard(
+            svgAssetName: map[character.status],
+            title: 'Status',
+            subtitle: character.status,
+          ),
+          DetailsCard(
+            svgAssetName: map[character.species],
+            title: 'Species',
+            subtitle: character.species,
+          ),
+          DetailsCard(
+            svgAssetName: map[('${character.gender}_gender')],
+            title: 'Gender',
+            subtitle: character.gender,
           ),
         ],
       ),
+    );
+  }
+}
+
+class DetailsCard extends StatelessWidget {
+  const DetailsCard({
+    super.key,
+    required this.svgAssetName,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final String svgAssetName;
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Container(
+        height: 40,
+        width: 40,
+        decoration: BoxDecoration(
+          color: AppColors.irisBlue,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SvgPicture.asset(
+            svgAssetName,
+            colorFilter: ColorFilter.mode(
+              AppColors.whiteSmoke,
+              BlendMode.srcIn,
+            ),
+          ),
+        ),
+      ),
+      title: Text(title, style: AppTextTheme.bodyMedium),
+      subtitle: Text(subtitle, style: AppTextTheme.subtitleBold),
     );
   }
 }
@@ -51,7 +119,7 @@ class BackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () => {context.go(Routes.main)},
       child: Container(
         height: 44,
         width: 44,

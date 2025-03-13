@@ -67,9 +67,11 @@ flutter:
   assets:
     - assets/icons/alien.svg
     - assets/icons/alive.svg
+    - assets/icons/arrow-left.svg
     - assets/icons/dead.svg
     - assets/icons/female.svg
     - assets/icons/human.svg
+    - assets/icons/information.svg
     - assets/icons/like.svg
     - assets/icons/male.svg
     - assets/icons/unknown_alive.svg

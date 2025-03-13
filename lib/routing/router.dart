@@ -5,7 +5,7 @@ import '../ui/home_screen/home_screen.dart';
 import 'routes.dart';
 
 GoRouter router() => GoRouter(
-  initialLocation: Routes.details,
+  initialLocation: Routes.main,
   routes: [
     GoRoute(path: Routes.main, builder: (context, state) => HomeScreen()),
     GoRoute(path: Routes.details, builder: (context, state) => DetailsScreen()),
