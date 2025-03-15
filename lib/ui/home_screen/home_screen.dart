@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rick_and_morty/data/service/api_service.dart';
+import 'package:rick_and_morty/di/injection_container.dart';
 import 'package:rick_and_morty/ui/core/colors.dart';
 import 'package:rick_and_morty/ui/core/text_theme.dart';
 
@@ -15,15 +15,28 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => HomeBloc(ApiService())..add(HomeEvent.started()),
+    return BlocProvider<HomeBloc>(
+      create: (context) => getIt()..add(HomeEvent.fetched()),
       child: const HomeView(),
     );
   }
 }
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,29 +45,55 @@ class HomeView extends StatelessWidget {
         builder: (context, state) {
           switch (state.status) {
             case HomeStatus.initial:
-              return Center(child: Text('initial'));
+              return Center(child: CircularProgressIndicator());
             case HomeStatus.loading:
               return const Center(child: CircularProgressIndicator());
             case HomeStatus.failure:
               return const Center(child: Text('error'));
             case HomeStatus.success:
               return GridView.builder(
+                controller: _scrollController,
                 padding: EdgeInsets.fromLTRB(10, 55, 10, 0),
-                itemCount: state.characters?.length,
+                itemCount:
+                    state.hasReachedMax
+                        ? state.characters.length
+                        : state.characters.length + 1,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 0.74,
                 ),
                 itemBuilder: (BuildContext context, int index) {
-                  return CharacterCard(
-                    characterSummary: state.characters![index],
-                  );
+                  return index >= state.characters.length
+                      ? CircularProgressIndicator()
+                      : CharacterCard(
+                        characterSummary: state.characters[index],
+                      );
                 },
               );
           }
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      // print('bottom');
+      context.read<HomeBloc>().add(HomeEvent.fetched());
+    }
+  }
+
+  bool get _isBottom {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.offset;
+    return currentScroll >= (maxScroll * 0.9);
   }
 }
 
@@ -86,7 +125,11 @@ class CharacterCard extends StatelessWidget {
                     ),
                     child: Image.network(characterSummary.image),
                   ),
-                  Positioned(right: 10, top: 10, child: LikeButton()),
+                  Positioned(
+                    right: 10,
+                    top: 10,
+                    child: LikeButton(id: characterSummary.id),
+                  ),
                 ],
               ),
               Padding(
@@ -105,8 +148,9 @@ class CharacterCard extends StatelessWidget {
 }
 
 class LikeButton extends StatefulWidget {
-  const LikeButton({super.key});
+  const LikeButton({super.key, required this.id});
 
+  final int id;
   @override
   State<LikeButton> createState() => _LikeButtonState();
 }
@@ -118,6 +162,10 @@ class _LikeButtonState extends State<LikeButton> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        context.read<HomeBloc>().add(
+          HomeEvent.changeLike(isLiked: isLiked, id: widget.id),
+        );
+
         setState(() => isLiked = !isLiked);
       },
       child: Container(

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'di/injection_container.dart';
 import 'routing/router.dart';
 import 'ui/core/theme.dart';
 
-void main() {
+void main() async {
+  await initializedDependencies();
   runApp(const MyApp());
 }
 

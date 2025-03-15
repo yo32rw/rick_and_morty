@@ -16,7 +16,10 @@ enum HomeStatus {
 abstract class HomeState with _$HomeState {
   const factory HomeState({
     @Default(HomeStatus.initial) HomeStatus status,
-    List<CharacterSummary>? characters,
+    @Default([]) List<CharacterSummary> characters,
+    @Default(1) int currentPage,
+    int? lastPage,
+    @Default(false) bool hasReachedMax,
   }) = _HomeState;
 
   factory HomeState.fromJson(Map<String, dynamic> json) =>
