@@ -7,7 +7,23 @@ class LocalStorage {
 
   LocalStorage(this.sharedPreferences);
 
+  List<int> getCharacterIds() {
+    List<String> characterIds =
+        sharedPreferences.getStringList(DbKeyStorage.characterId) ?? [];
+    return characterIds.map(int.parse).toSet().toList();
+  }
+
   void setCharacterId(int id) {
-    sharedPreferences.setInt(DbKeyStorage.characterId, id);
+    List<String> characterIds =
+        sharedPreferences.getStringList(DbKeyStorage.characterId) ?? [];
+    characterIds.add(id.toString());
+    sharedPreferences.setStringList(DbKeyStorage.characterId, characterIds);
+  }
+
+  void deleteCharacterId(int id) {
+    List<String> characterIds =
+        sharedPreferences.getStringList(DbKeyStorage.characterId) ?? [];
+    characterIds.removeWhere((item) => item == id.toString());
+    sharedPreferences.setStringList(DbKeyStorage.characterId, characterIds);
   }
 }

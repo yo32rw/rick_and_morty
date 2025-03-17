@@ -84,7 +84,6 @@ class _HomeViewState extends State<HomeView> {
 
   void _onScroll() {
     if (_isBottom) {
-      // print('bottom');
       context.read<HomeBloc>().add(HomeEvent.fetched());
     }
   }
@@ -105,7 +104,7 @@ class CharacterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.go(Routes.details),
+      onTap: () => context.push(Routes.detailWithId(characterSummary.id)),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: DecoratedBox(
@@ -128,7 +127,7 @@ class CharacterCard extends StatelessWidget {
                   Positioned(
                     right: 10,
                     top: 10,
-                    child: LikeButton(id: characterSummary.id),
+                    child: LikeButton(characterSummary: characterSummary),
                   ),
                 ],
               ),
@@ -147,26 +146,21 @@ class CharacterCard extends StatelessWidget {
   }
 }
 
-class LikeButton extends StatefulWidget {
-  const LikeButton({super.key, required this.id});
+class LikeButton extends StatelessWidget {
+  const LikeButton({super.key, required this.characterSummary});
 
-  final int id;
-  @override
-  State<LikeButton> createState() => _LikeButtonState();
-}
-
-class _LikeButtonState extends State<LikeButton> {
-  bool isLiked = false;
+  final CharacterSummary characterSummary;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         context.read<HomeBloc>().add(
-          HomeEvent.changeLike(isLiked: isLiked, id: widget.id),
+          HomeEvent.changeLike(
+            isLiked: !(characterSummary.isLiked ?? false),
+            id: characterSummary.id,
+          ),
         );
-
-        setState(() => isLiked = !isLiked);
       },
       child: Container(
         height: 30,
@@ -178,7 +172,7 @@ class _LikeButtonState extends State<LikeButton> {
         child: Padding(
           padding: const EdgeInsets.all(5.0),
           child:
-              isLiked
+              characterSummary.isLiked ?? false
                   ? SvgPicture.asset('assets/icons/like.svg')
                   : SvgPicture.asset('assets/icons/unlike.svg'),
         ),

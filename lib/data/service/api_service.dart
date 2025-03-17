@@ -4,6 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:rick_and_morty/data/character_summary.dart';
 import 'package:rick_and_morty/data/response_pagination_model.dart';
 
+import '../character.dart';
+
 class ApiService {
   final Dio dio;
 
@@ -18,6 +20,16 @@ class ApiService {
       final ResponsePaginationModel responsePaginationModel =
           ResponsePaginationModel.fromJson(response.data);
       return responsePaginationModel.results;
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  Future<Character> getCharacterDetail({required int id}) async {
+    try {
+      final response = await dio.get('/character/$id');
+      final Character character = Character.fromJson(response.data);
+      return character;
     } on Exception {
       rethrow;
     }

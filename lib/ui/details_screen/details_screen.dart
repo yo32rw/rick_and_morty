@@ -1,23 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rick_and_morty/ui/details_screen/bloc/detail_bloc.dart';
 
 import '../../data/character.dart';
+import '../../di/injection_container.dart';
 import '../../routing/routes.dart';
 import '../core/colors.dart';
 import '../core/text_theme.dart';
 
 class DetailsScreen extends StatelessWidget {
-  const DetailsScreen({super.key});
+  const DetailsScreen({super.key, required this.id});
+  final int id;
 
-  static Character character = Character(
-    id: 4,
-    name: 'Beth Smith',
-    status: 'Alive',
-    species: 'Human',
-    gender: 'Female',
-    image: 'https://rickandmortyapi.com/api/character/avatar/4.jpeg',
-  );
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<DetailBloc>(
+      create: (context) => sl()..add(DetailEvent.fetched(id: id)),
+      child: Scaffold(
+        body: BlocBuilder<DetailBloc, DetailState>(
+          builder: (context, state) {
+            switch (state.status) {
+              case DetailStatus.initial:
+                return const Center(child: CircularProgressIndicator());
+              case DetailStatus.loading:
+                return const Center(child: CircularProgressIndicator());
+              case DetailStatus.failure:
+                return const Center(child: Text('error'));
+              case DetailStatus.success:
+                return DetailsView(character: state.character!);
+            }
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class DetailsView extends StatelessWidget {
+  const DetailsView({super.key, required this.character});
+
+  final Character character;
+  // Character(
+  //   id: 4,
+  //   name: 'Beth Smith',
+  //   status: 'Alive',
+  //   species: 'Human',
+  //   gender: 'Female',
+  //   image: 'https://rickandmortyapi.com/api/character/avatar/4.jpeg',
+  // );
 
   final Map map = const <String, String>{
     'Alien': 'assets/icons/alien.svg',
@@ -32,44 +64,42 @@ class DetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(
-            height: 260,
-            child: Stack(
-              children: [
-                Image.network(
-                  character.image,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-                Positioned(left: 20, top: 45, child: BackButton()),
-              ],
-            ),
+    return Column(
+      children: [
+        SizedBox(
+          height: 260,
+          child: Stack(
+            children: [
+              Image.network(
+                character.image,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+              Positioned(left: 20, top: 45, child: BackButton()),
+            ],
           ),
-          DetailsCard(
-            svgAssetName: 'assets/icons/information.svg',
-            title: 'Name',
-            subtitle: character.name,
-          ),
-          DetailsCard(
-            svgAssetName: map[character.status],
-            title: 'Status',
-            subtitle: character.status,
-          ),
-          DetailsCard(
-            svgAssetName: map[character.species],
-            title: 'Species',
-            subtitle: character.species,
-          ),
-          DetailsCard(
-            svgAssetName: map[('${character.gender}_gender')],
-            title: 'Gender',
-            subtitle: character.gender,
-          ),
-        ],
-      ),
+        ),
+        DetailsCard(
+          svgAssetName: 'assets/icons/information.svg',
+          title: 'Name',
+          subtitle: character.name,
+        ),
+        DetailsCard(
+          svgAssetName: map[character.status],
+          title: 'Status',
+          subtitle: character.status,
+        ),
+        DetailsCard(
+          svgAssetName: map[character.species],
+          title: 'Species',
+          subtitle: character.species,
+        ),
+        DetailsCard(
+          svgAssetName: map[('${character.gender}_gender')],
+          title: 'Gender',
+          subtitle: character.gender,
+        ),
+      ],
     );
   }
 }
@@ -119,7 +149,7 @@ class BackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => {context.go(Routes.main)},
+      onTap: () => context.pop(),
       child: Container(
         height: 44,
         width: 44,

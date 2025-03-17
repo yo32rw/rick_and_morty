@@ -28,8 +28,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if (state.hasReachedMax) return;
     _canProcessEvent = true;
     try {
-      final List<CharacterSummary> characters = await apiService
-          .getCharactersList(page: state.currentPage);
+      List<CharacterSummary> characters = await apiService.getCharactersList(
+        page: state.currentPage,
+      );
+      final characterIds = localStorage.getCharacterIds();
+      final List<CharacterSummary> charactersMod = [];
+      for (var character in characters) {
+        if (characterIds.contains(character.id)) {
+          charactersMod.add(character.copyWith(isLiked: true));
+        } else {
+          charactersMod.add(character.copyWith(isLiked: false));
+        }
+      }
       if (state.lastPage != null && state.currentPage == state.lastPage) {
         return emit(state.copyWith(hasReachedMax: true));
       }
@@ -38,15 +48,30 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         state.copyWith(
           status: HomeStatus.success,
           currentPage: page,
-          characters: [...state.characters, ...characters],
+          characters: [...state.characters, ...charactersMod],
         ),
       );
       await Future.delayed(Duration(milliseconds: 500));
       _canProcessEvent = false;
-    } on Exception catch (error) {
+    } on Exception {
       emit(state.copyWith(status: HomeStatus.failure));
     }
   }
 
-  FutureOr<void> _onChangeLike(_ChangeLike event, Emitter<HomeState> emit) {}
+  FutureOr<void> _onChangeLike(_ChangeLike event, Emitter<HomeState> emit) {
+    if (event.isLiked) {
+      localStorage.setCharacterId(event.id);
+    } else {
+      localStorage.deleteCharacterId(event.id);
+    }
+    final List<CharacterSummary> characters = [];
+    for (var character in state.characters) {
+      if (character.id == event.id) {
+        characters.add(character.copyWith(isLiked: event.isLiked));
+      } else {
+        characters.add(character);
+      }
+    }
+    emit(state.copyWith(characters: characters));
+  }
 }

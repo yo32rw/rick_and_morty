@@ -8,6 +8,12 @@ GoRouter router() => GoRouter(
   initialLocation: Routes.main,
   routes: [
     GoRoute(path: Routes.main, builder: (context, state) => HomeScreen()),
-    GoRoute(path: Routes.details, builder: (context, state) => DetailsScreen()),
+    GoRoute(
+      path: '${Routes.details}/:id',
+      builder: (context, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        return DetailsScreen(id: id);
+      },
+    ),
   ],
 );

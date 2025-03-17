@@ -9,6 +9,7 @@ abstract class CharacterSummary with _$CharacterSummary {
     required int id,
     required String name,
     required String image,
+    required bool? isLiked,
   }) = _CharacterSummary;
 
   factory CharacterSummary.fromJson(Map<String, dynamic> json) =>

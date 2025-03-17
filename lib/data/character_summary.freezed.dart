@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CharacterSummary {
 
- int get id; String get name; String get image;
+ int get id; String get name; String get image; bool? get isLiked;
 /// Create a copy of CharacterSummary
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $CharacterSummaryCopyWith<CharacterSummary> get copyWith => _$CharacterSummaryCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CharacterSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.image, image) || other.image == image));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CharacterSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.image, image) || other.image == image)&&(identical(other.isLiked, isLiked) || other.isLiked == isLiked));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,image);
+int get hashCode => Object.hash(runtimeType,id,name,image,isLiked);
 
 @override
 String toString() {
-  return 'CharacterSummary(id: $id, name: $name, image: $image)';
+  return 'CharacterSummary(id: $id, name: $name, image: $image, isLiked: $isLiked)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $CharacterSummaryCopyWith<$Res>  {
   factory $CharacterSummaryCopyWith(CharacterSummary value, $Res Function(CharacterSummary) _then) = _$CharacterSummaryCopyWithImpl;
 @useResult
 $Res call({
- int id, String name, String image
+ int id, String name, String image, bool? isLiked
 });
 
 
@@ -66,12 +66,13 @@ class _$CharacterSummaryCopyWithImpl<$Res>
 
 /// Create a copy of CharacterSummary
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? image = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? image = null,Object? isLiked = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,image: null == image ? _self.image : image // ignore: cast_nullable_to_non_nullable
-as String,
+as String,isLiked: freezed == isLiked ? _self.isLiked : isLiked // ignore: cast_nullable_to_non_nullable
+as bool?,
   ));
 }
 
@@ -82,12 +83,13 @@ as String,
 @JsonSerializable()
 
 class _CharacterSummary implements CharacterSummary {
-  const _CharacterSummary({required this.id, required this.name, required this.image});
+  const _CharacterSummary({required this.id, required this.name, required this.image, required this.isLiked});
   factory _CharacterSummary.fromJson(Map<String, dynamic> json) => _$CharacterSummaryFromJson(json);
 
 @override final  int id;
 @override final  String name;
 @override final  String image;
+@override final  bool? isLiked;
 
 /// Create a copy of CharacterSummary
 /// with the given fields replaced by the non-null parameter values.
@@ -102,16 +104,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CharacterSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.image, image) || other.image == image));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CharacterSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.image, image) || other.image == image)&&(identical(other.isLiked, isLiked) || other.isLiked == isLiked));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,image);
+int get hashCode => Object.hash(runtimeType,id,name,image,isLiked);
 
 @override
 String toString() {
-  return 'CharacterSummary(id: $id, name: $name, image: $image)';
+  return 'CharacterSummary(id: $id, name: $name, image: $image, isLiked: $isLiked)';
 }
 
 
@@ -122,7 +124,7 @@ abstract mixin class _$CharacterSummaryCopyWith<$Res> implements $CharacterSumma
   factory _$CharacterSummaryCopyWith(_CharacterSummary value, $Res Function(_CharacterSummary) _then) = __$CharacterSummaryCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String name, String image
+ int id, String name, String image, bool? isLiked
 });
 
 
@@ -139,12 +141,13 @@ class __$CharacterSummaryCopyWithImpl<$Res>
 
 /// Create a copy of CharacterSummary
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? image = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? image = null,Object? isLiked = freezed,}) {
   return _then(_CharacterSummary(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,image: null == image ? _self.image : image // ignore: cast_nullable_to_non_nullable
-as String,
+as String,isLiked: freezed == isLiked ? _self.isLiked : isLiked // ignore: cast_nullable_to_non_nullable
+as bool?,
   ));
 }
 

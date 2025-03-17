@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rick_and_morty/data/service/local_storage.dart';
+import 'package:rick_and_morty/ui/details_screen/bloc/detail_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/service/api_service.dart';
@@ -30,4 +31,6 @@ Future<void> initializedDependencies() async {
   sl.registerFactory<HomeBloc>(
     () => HomeBloc(apiService: sl(), localStorage: sl()),
   );
+
+  sl.registerFactory<DetailBloc>(() => DetailBloc(apiService: sl()));
 }
