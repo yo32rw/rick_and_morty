@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:rick_and_morty/data/character_summary.dart';
 import 'package:rick_and_morty/data/service/api_service.dart';
+import 'package:rick_and_morty/data/service/local_storage.dart';
 
 part 'home_screen_event.dart';
 part 'home_screen_state.dart';
@@ -13,19 +14,21 @@ part 'home_screen_bloc.g.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   bool _canProcessEvent = false;
 
-  HomeBloc(this._apiService) : super(const HomeState()) {
+  HomeBloc({required this.apiService, required this.localStorage})
+    : super(const HomeState()) {
     on<_Fetched>(_onFetched);
     on<_ChangeLike>(_onChangeLike);
   }
 
-  final ApiService _apiService;
+  final ApiService apiService;
+  final LocalStorage localStorage;
 
   FutureOr<void> _onFetched(_Fetched event, Emitter<HomeState> emit) async {
     if (_canProcessEvent) return;
     if (state.hasReachedMax) return;
     _canProcessEvent = true;
     try {
-      final List<CharacterSummary> characters = await _apiService
+      final List<CharacterSummary> characters = await apiService
           .getCharactersList(page: state.currentPage);
       if (state.lastPage != null && state.currentPage == state.lastPage) {
         return emit(state.copyWith(hasReachedMax: true));

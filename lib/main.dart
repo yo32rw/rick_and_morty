@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'di/injection_container.dart';
 import 'routing/router.dart';
 import 'ui/core/theme.dart';
 
 void main() async {
-  await initializedDependencies();
+  WidgetsFlutterBinding.ensureInitialized();
+  initializedDependencies();
+  await sl.isReady<SharedPreferences>();
+
   runApp(const MyApp());
 }
 
